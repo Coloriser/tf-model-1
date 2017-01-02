@@ -1,18 +1,15 @@
 from os import path
 import sys
 import numpy as np
-import cv2
+import cv2 as cv
 
 def get_features(file_name):
 
     # alternative detectors, descriptors, matchers, parameters ==> different results
-    detector = cv2.BRISK(thresh=10, octaves=1)
-    extractor = cv2.DescriptorExtractor_create('BRISK')  # non-patented. Thank you!
-    matcher = cv2.BFMatcher(cv2.NORM_L2SQR)
-
 
     # Object Features
-    obj_original = cv2.imread(path.join(file_name),cv2.CV_LOAD_IMAGE_COLOR)
+    # obj_original = cv.imread(path.join(file_name),cv.CV2_LOAD_IMAGE_COLOR)
+    obj_original = cv.imread(path.join(file_name), cv.IMREAD_COLOR)
 
     #error checking
     if obj_original is None:
@@ -21,8 +18,22 @@ def get_features(file_name):
 
 
     # basic feature detection works in grayscale
-    obj = cv2.cvtColor(obj_original, cv2.COLOR_BGR2GRAY)
+    obj = cv.cvtColor(obj_original, cv.COLOR_BGR2GRAY)
 
+
+    #for cv version 3.1.0 
+    if cv.__version__ == '3.1.0':
+        brisk = cv.BRISK_create()
+        (obj_keypoints, obj_descriptors) = brisk.detectAndCompute(obj, None)
+        return obj_descriptors,obj_keypoints
+    #for cv versions 2.x.x
+    detector = cv.BRISK(thresh=10, octaves=1)
+    extractor = cv.DescriptorExtractor_create('BRISK')  # non-patented. Thank you!
+
+    matcher = cv.BFMatcher(cv.NORM_L2SQR)
+
+
+    
 
 
     # keypoints are "interesting" points in an image:
@@ -33,7 +44,7 @@ def get_features(file_name):
     obj_keypoints, obj_descriptors = extractor.compute(obj, obj_keypoints)
 
 
-    return obj_descriptors
+    return obj_descriptors,obj_keypoints
 
 #akheel code
 # print 'Keypoints : ',obj_keypoints 
