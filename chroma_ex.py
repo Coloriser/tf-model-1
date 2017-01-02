@@ -2,7 +2,7 @@ import numpy as np
 import skimage.color as color
 import skimage.io as io
 
-def extractA(file_name):
+def extract_A(file_name):
 	img_rgb = io.imread(file_name)
 
 	img_lab = color.rgb2lab(img_rgb) # convert image to lab color space
@@ -14,7 +14,7 @@ def extractA(file_name):
 	
 	return img_l
 
-def extractB(file_name):
+def extract_B(file_name):
 	img_rgb = io.imread(file_name)
 
 	img_lab = color.rgb2lab(img_rgb) # convert image to lab color space
@@ -26,7 +26,7 @@ def extractB(file_name):
 	
 	return img_l	
 
-def extractAB(file_name):
+def extract_AB(file_name):
 	img_rgb = io.imread(file_name)
 
 	img_lab = color.rgb2lab(img_rgb) # convert image to lab color space
