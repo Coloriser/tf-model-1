@@ -1,8 +1,9 @@
 import brisk
 import argparse
 from glob import glob
-import os
-from os.path import exists
+# import os
+from os.path import exists, join, basename, splitext
+import numpy
 
 
 EXTENSIONS = [".jpg", ".bmp", ".png", ".pgm", ".tif", ".tiff"]
@@ -24,9 +25,9 @@ def parse_arguments():						#argument parser -d for the pathlist
 
 def get_imgfiles(path):						#gets image from the path
     all_files = []
-    all_files.extend([os.path.join(path, os.path.basename(fname))
+    all_files.extend([join(path, basename(fname))
                     for fname in glob(path + "/*")
-                    if 1])
+                    if splitext(fname)[-1].lower() in EXTENSIONS])
     print all_files
     return all_files
 
@@ -34,9 +35,9 @@ def process_image(imagename, resultname="temp.brisk"):
 	""" process an image and save the results in a .key ascii file"""
 	print("working on " + imagename)
 	# run extraction command
-	extracted_features, keypoints = brisk.get_features( imagename)
+	extracted_features, keypoints = brisk.get_features( imagename, resultname)
 	print( str(len(keypoints)) + " keypoints found.")
-	return 
+	return extracted_features
       
 
 
@@ -48,12 +49,13 @@ def extractBrisk(input_files):
         features_fname = fname + '.brisk'
         if exists(features_fname) == False:
             print "calculating brisk for", fname
-            process_image(fname, features_fname)
+            extracted_features = process_image(fname, features_fname)
+            print extracted_features.shape
         print "gathering brisk for", fname
-        """ HAVE TO WORK WITH THE WRITING PART """
-        # locs, descriptors = brisk.read_features_from_file(features_fname)
-        # print descriptors.shape
-        # all_features_dict[fname] = descriptors
+        """ HAVE TO TEST THIS PART """
+        descriptors = numpy.load(features_fname)
+        print descriptors.shape
+        all_features_dict[fname] = descriptors
     return all_features_dict
 
 

@@ -3,7 +3,7 @@ import sys
 import numpy as np
 import cv2 as cv
 
-def get_features(file_name):
+def get_features(file_name, resultname='temp.brisk'):
 
     # alternative detectors, descriptors, matchers, parameters ==> different results
 
@@ -25,7 +25,12 @@ def get_features(file_name):
     if cv.__version__ == '3.1.0':
         brisk = cv.BRISK_create()
         (obj_keypoints, obj_descriptors) = brisk.detectAndCompute(obj, None)
+        
+        #dump numpy array to file
+        obj_descriptors.dump(resultname)
+
         return obj_descriptors,obj_keypoints
+        
     #for cv versions 2.x.x
     detector = cv.BRISK(thresh=10, octaves=1)
     extractor = cv.DescriptorExtractor_create('BRISK')  # non-patented. Thank you!
@@ -43,6 +48,8 @@ def get_features(file_name):
     # this lines up each keypoint with a mathematical description
     obj_keypoints, obj_descriptors = extractor.compute(obj, obj_keypoints)
 
+    #dump numpy array to file
+    obj_descriptors.dump(resultname)
 
     return obj_descriptors,obj_keypoints
 
