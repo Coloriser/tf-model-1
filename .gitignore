@@ -46,4 +46,7 @@ Network Trash Folder
 Temporary Items
 .apdisk
 
-.pyc
+#Custom files
+*.pyc
+*.brisk
+*.chroma

@@ -14,7 +14,7 @@ def extract_A(file_name, resultname='temp.chroma'):
 	# img_lab[:,:,2]=0
 	# io.imsave("Achannel.tiff", img_lab)
 	
-	return img_l
+	return
 
 def extract_B(file_name, resultname='temp.chroma'):
 	img_rgb = io.imread(file_name)
