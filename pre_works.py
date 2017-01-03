@@ -45,7 +45,6 @@ def process_chroma(imagename, resultname="temp.chroma"):
 	print("(chroma)working on " + imagename)
 	# run extraction command
 	chroma_features= extract_A( imagename, resultname)
-	print chroma_features
 	return
 
 def process_images(input_files):
