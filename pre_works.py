@@ -44,12 +44,13 @@ def process_chroma(imagename, resultname="temp.chroma"):
 	""" process an image and save the results in a .key ascii file"""
 	print("(chroma)working on " + imagename)
 	# run extraction command
-	chroma_features= extract_A( imagename, resultname)
+	extract_A( imagename, resultname)
 	return
 
 def process_images(input_files):
     print "BEGIN EXTRACTION"
-    all_features_dict = {}
+    brisk_features_arr = []
+    chroma_features_arr = []
     for i, fname in enumerate(input_files):
         brisk_fname = fname + '.brisk'
         chroma_fname = fname + '.chroma'
@@ -65,25 +66,23 @@ def process_images(input_files):
         print "gathering chroma for", fname
         chroma = numpy.load(chroma_fname)
         print chroma.shape
-        all_features_dict[fname] = descriptors
-    return all_features_dict, chroma
+        brisk_features_arr.append(descriptors)
+        chroma_features_arr.append(chroma)
+    return brisk_features_arr, chroma_features_arr
 
-print "---------------------"
-print "## loading the images and extracting the BRISK features"
-args = parse_arguments()
-datasetpath = args.d
-print "Searching for images at " + datasetpath
-all_files = []
-all_features = {}
-img_files = get_imgfiles(datasetpath)
-if img_files :
-	brisk_features, chroma_features = process_images( img_files )
-	all_files = all_files + img_files
-	all_features.update(brisk_features)
-else:
-	print "No files found"
-	
-
-
-
-
+def begin(datasetpath = DATASETPATH):
+	print "---------------------"
+	print "## loading the images and extracting the BRISK features"
+	# args = parse_arguments()
+	# datasetpath = args.d
+	print "Searching for images at " + datasetpath
+	all_files = []
+	brisk_features = []
+	chroma_features = []
+	img_files = get_imgfiles(datasetpath)
+	if img_files :
+		all_files = all_files + img_files
+		return process_images( img_files )
+	else:
+		print "No files found"
+		return
