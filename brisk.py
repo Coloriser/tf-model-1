@@ -51,7 +51,7 @@ def get_features(file_name, resultname='temp.brisk'):
     #dump numpy array to file
     obj_descriptors.dump(resultname)
 
-    return obj_descriptors,obj_keypoints
+    return obj_keypoints
 
 #akheel code
 # print 'Keypoints : ',obj_keypoints 

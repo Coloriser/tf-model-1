@@ -4,9 +4,10 @@ from glob import glob
 # import os
 from os.path import exists, join, basename, splitext
 import numpy
+from chroma_ex import extract_A
 
 
-EXTENSIONS = [".jpg", ".bmp", ".png", ".pgm", ".tif", ".tiff"]
+EXTENSIONS = [".jpg", ".bmp"]
 DATASETPATH = 'dataset'
 """ BRISK PARAMS """
 MAXSIZE = 1024
@@ -31,34 +32,42 @@ def get_imgfiles(path):						#gets image from the path
     print all_files
     return all_files
 
-def process_image(imagename, resultname="temp.brisk"):
+def process_brisk(imagename, resultname="temp.brisk"):
 	""" process an image and save the results in a .key ascii file"""
-	print("working on " + imagename)
+	print("(brisk)working on " + imagename)
 	# run extraction command
-	extracted_features, keypoints = brisk.get_features( imagename, resultname)
+	keypoints = brisk.get_features( imagename, resultname)
 	print( str(len(keypoints)) + " keypoints found.")
-	return extracted_features
-      
+	return
 
+def process_chroma(imagename, resultname="temp.chroma"):
+	""" process an image and save the results in a .key ascii file"""
+	print("(chroma)working on " + imagename)
+	# run extraction command
+	chroma_features= extract_A( imagename, resultname)
+	print chroma_features
+	return
 
-
-def extractBrisk(input_files):
+def process_images(input_files):
     print "BEGIN EXTRACTION"
     all_features_dict = {}
     for i, fname in enumerate(input_files):
-        features_fname = fname + '.brisk'
-        if exists(features_fname) == False:
-            print "calculating brisk for", fname
-            extracted_features = process_image(fname, features_fname)
-            print extracted_features.shape
+        brisk_fname = fname + '.brisk'
+        chroma_fname = fname + '.chroma'
+        if exists(brisk_fname) == False:
+            print "step i: calculating brisk for", fname
+            process_brisk(fname, brisk_fname)
+        if exists(chroma_fname) == False:
+            print "step ii: calculating chroma for", fname
+            process_chroma(fname, chroma_fname)
         print "gathering brisk for", fname
         """ HAVE TO TEST THIS PART """
-        descriptors = numpy.load(features_fname)
-        print descriptors.shape
+        descriptors = numpy.load(brisk_fname)
+        print "gathering chroma for", fname
+        chroma = numpy.load(chroma_fname)
+        print chroma.shape
         all_features_dict[fname] = descriptors
-    return all_features_dict
-
-
+    return all_features_dict, chroma
 
 print "---------------------"
 print "## loading the images and extracting the BRISK features"
@@ -69,9 +78,9 @@ all_files = []
 all_features = {}
 img_files = get_imgfiles(datasetpath)
 if img_files :
-	cat_features = extractBrisk(img_files)
+	brisk_features, chroma_features = process_images( img_files )
 	all_files = all_files + img_files
-	all_features.update(cat_features)
+	all_features.update(brisk_features)
 else:
 	print "No files found"
 	
